@@ -1,0 +1,269 @@
+[index.html](https://github.com/user-attachments/files/23386744/index.html)
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Assistant Live - Phone Landscape Demo (v2)</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="phone-shell" id="phoneShell">[app.js](https://github.com/user-attachmSTEP-BY-STEP for v2 behavior change you requested:
+
+Behavior summary:[style.css](https://github.com/user-attachments/files/23386773/style.css):root{
+  --bg:#f0f4ff;--panel:#fff;--ink:#111;--muted:#666;--accent:#3b82f6;--phone-bg:#e9eef8;
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+body{margin:16px;display:flex;justify-content:center;align-items:center;background:linear-gradient(180deg,#e6eefc,#f8f9ff);min-height:100vh}
+.phone-shell{width:min(960px,96vw);aspect-ratio:16/9;background:var(--phone-bg);border-radius:22px;padding:12px;display:flex;gap:12px;box-shadow:0 14px 40px rgba(10,20,60,0.12);align-items:stretch}
+.left-col{width:18%;background:linear-gradient(180deg,var(--panel),#fbfdff);border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:stretch;gap:8px;overflow:hidden;border:1px solid rgba(20,30,60,0.04)}
+.words-header{font-weight:700;padding-bottom:6px}
+.words-list{list-style:none;padding:0;margin:0;overflow:auto;flex:1;border-top:1px dashed rgba(0,0,0,0.04)}
+.words-list li{padding:8px 6px;border-bottom:1px solid rgba(0,0,0,0.03);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.words-list li.active{background:linear-gradient(90deg,rgba(59,130,246,0.08),rgba(59,130,246,0.03));font-weight:600}
+.small{padding:6px 8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:transparent;cursor:pointer}
+
+.main-screen{flex:1;background:var(--panel);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)}
+.top-bar{display:flex;justify-content:space-between;align-items:center;padding:4px 8px}
+.assistant-name{font-weight:700}
+.content-area{display:flex;flex:1;gap:10px;align-items:stretch}
+.video-area{flex:1;display:flex;flex-direction:column;gap:8px;align-items:stretch}
+.ai-video{flex:1;border-radius:10px;border:2px solid rgba(0,0,0,0.06);background:linear-gradient(180deg,#fff,#fbfdff);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:12px}
+.video-inner{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.video-title{position:absolute;top:8px;left:10px;background:rgba(255,255,255,0.9);padding:6px 10px;border-radius:8px;font-weight:600;border:1px solid rgba(0,0,0,0.04)}
+.video-placeholder{width:90%;height:60%;border-radius:8px;border:2px dashed rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;color:var(--muted);padding:12px;text-align:center}
+
+.video-thumbs{display:flex;gap:8px;width:90%;justify-content:center}
+.thumb{width:30%;height:120px;border-radius:8px;background:linear-gradient(180deg,#f8fafc,#eef2ff);display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,0.04);cursor:pointer;padding:8px}
+
+.waveform{height:56px;display:flex;align-items:center;justify-content:center}
+.bars{display:flex;gap:3px;height:100%;align-items:flex-end;width:80%}
+.bars span{width:6px;height:8px;background:linear-gradient(180deg,var(--accent),#7dd3fc);display:inline-block;border-radius:4px;opacity:0.95;animation:wave 1s linear infinite}
+.bars span:nth-child(odd){animation-duration:0.9s}
+@keyframes wave{0%{transform:scaleY(0.3)}50%{transform:scaleY(1)}100%{transform:scaleY(0.3)}}
+
+.right-col{width:22%;display:flex;flex-direction:column;gap:8px}
+.camera-box{background:linear-gradient(180deg,#fff,#fbfdff);border-radius:10px;padding:8px;border:1px solid rgba(0,0,0,0.06);flex:1;position:relative}
+.live-dot{position:absolute;top:8px;right:10px;font-weight:700;color:#e11d48}
+.camera-view{height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);border-radius:6px;border:1px dashed rgba(0,0,0,0.04);padding:12px;text-align:center}
+
+.pick-words{display:flex;gap:6px;align-items:center;padding-top:6px}
+.bottom-bar{display:flex;justify-content:flex-end;padding:4px 8px}
+
+.day-mode{--bg:#f0f4ff;--panel:#fff;--ink:#111;--muted:#556;--accent:#3b82f6;--phone-bg:#e9eef8}
+.night-mode{--bg:#081028;--panel:#071229;--ink:#e6eefc;--muted:#9fb6d9;--accent:#60a5fa;--phone-bg:#021026}
+.night-mode body{background:#001122}
+
+/* day-specific */
+.day-only-video{display:none}
+.night-only-thumbs{display:flex}
+
+/* night-specific */
+.night-mode .camera-box{opacity:0.35}
+.night-mode .live-dot{display:none}
+.night-mode .camera-view{color:var(--muted);font-style:italic}
+
+.night-only-thumbs{display:none}
+.day-only-video{display:block}
+
+.night-mode .day-only-video{display:block}
+.night-mode .night-only-thumbs{display:flex}
+
+.words-list::-webkit-scrollbar{width:8px;height:8px}
+.words-list::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#cbd5e1,#94a3b8);border-radius:8px}
+
+@media (max-width:700px){
+  .phone-shell{width:100vw;aspect-ratio:16/9;padding:6px;border-radius:8px;flex-direction:column}
+  .left-col{width:100%;height:110px;display:flex;flex-direction:row;overflow:auto}
+  .content-area{flex-direction:row}
+  .right-col{width:36%}
+}
+
+
+- DAY mode: Camera ON (right column). Main video area shows a placeholder and does NOT show AI clips. You can add/pick words and they will be stored in the left "Words" list.
+- NIGHT mode: Camera visually OFF/dim. Main video area shows 3 example AI short clips (click a thumb to "play" placeholder).
+
+Tiny next step for you (STEP 3):
+1) Download the ZIP below and replace your current app files with the ones inside, or unzip to a new folder and open index.html.
+2) Test Day mode (default) — add words and click them; camera should show "Camera On" behavior and the video area should remain a placeholder.
+3) Click the 🌙/☀️ toggle to switch to Night mode — camera should appear off/dim and the center area should show 3 clip thumbnails. Click a thumbnail to play a sample.
+Reply with what you see or say "WORKS" when it matches your sketch.
+[README.txt](https://github.com/user-attachments/files/23386764/README.txt)
+ents/files/23386758/app.js)// v2 behavior:
+// Day mode: camera visible & active (video minimized). You can pick/add words to store in left list.
+// Night mode: camera visually dimmed, show 3 short AI clip thumbnails in center; camera OFF state visually.
+// Toggle enacts the behavior.
+
+let words = ['happy','window','chair','desk','live','camera','learn','friend','play','night'];
+let currentIndex = 0;
+const wordsList = document.getElementById('wordsList');
+const currentWordEl = document.getElementById('currentWord');
+const videoTitle = document.getElementById('videoTitle');
+const phoneShell = document.getElementById('phoneShell');
+const cameraBox = document.getElementById('cameraBox');
+const videoContent = document.getElementById('videoContent');
+const wordsCount = document.getElementById('wordsCount');
+
+function renderWords(){
+  wordsList.innerHTML = '';
+  words.forEach((w,i)=>{
+    const li = document.createElement('li');
+    li.textContent = w;
+    li.dataset.index = i;
+    if(i===currentIndex) li.classList.add('active');
+    li.addEventListener('click', ()=>{ currentIndex = i; selectWord(); });
+    wordsList.appendChild(li);
+  });
+  wordsCount.textContent = words.length;
+}
+
+function selectWord(){
+  const w = words[currentIndex];
+  currentWordEl.textContent = w;
+  videoTitle.textContent = 'Short AI video for ' + w;
+  renderWords();
+  // camera quick overlay text to mimic recognition when in day
+  if(!phoneShell.classList.contains('night-mode')){
+    cameraBox.querySelector('.camera-view').textContent = 'Camera On — seeing: "'+w+'"';
+    setTimeout(()=>{ cameraBox.querySelector('.camera-view').textContent = 'Camera On — assistant ready'; }, 2200);
+  } else {
+    // night: clicking/selecting will show which clip
+    const vc = document.getElementById('videoContent');
+    vc.innerHTML = createNightThumbnailsHTML(w);
+  }
+}
+
+function createNightThumbnailsHTML(word){
+  return '<div class="video-thumbs">' +
+    '<div class="thumb" onclick="playExample(0,\''+word+'\')">Clip 1<br/><small>short example</small></div>' +
+    '<div class="thumb" onclick="playExample(1,\''+word+'\')">Clip 2<br/><small>short example</small></div>' +
+    '<div class="thumb" onclick="playExample(2,\''+word+'\')">Clip 3<br/><small>short example</small></div>' +
+    '</div>';
+}
+
+window.playExample = function(i, word){
+  const vc = document.getElementById('videoContent');
+  vc.innerHTML = '<div style="padding:12px;text-align:center">Playing clip '+(i+1)+' for "'+word+'" (placeholder)</div>';
+  // simulate waveform while clip plays
+  simulateWave(1200);
+}
+
+document.getElementById('nextWord').addEventListener('click', ()=>{ currentIndex = (currentIndex+1)%words.length; selectWord(); });
+document.getElementById('prevWord').addEventListener('click', ()=>{ currentIndex = (currentIndex-1+words.length)%words.length; selectWord(); });
+document.getElementById('addWord').addEventListener('click', ()=>{
+  const v = document.getElementById('newWord').value.trim();
+  if(!v) return;
+  words.push(v);
+  document.getElementById('newWord').value = '';
+  currentIndex = words.length-1;
+  renderWords();
+  selectWord();
+});
+document.getElementById('toggleDayNight').addEventListener('click', ()=>{
+  const night = phoneShell.classList.toggle('night-mode');
+  phoneShell.classList.toggle('day-mode', !night);
+  if(night){
+    enterNightMode();
+  } else {
+    enterDayMode();
+  }
+});
+
+document.getElementById('playAll').addEventListener('click', ()=>{
+  let i=0;
+  const interval = setInterval(()=>{
+    currentIndex = i%words.length;
+    selectWord();
+    i++;
+    if(i>words.length) clearInterval(interval);
+  }, 1200);
+});
+
+// create waveform bars
+const barsContainer = document.getElementById('waveBars');
+for(let i=0;i<28;i++){
+  const sp = document.createElement('span');
+  sp.style.animationDelay = (Math.random()*1)+'s';
+  sp.style.height = (8 + Math.random()*80)+'%';
+  barsContainer.appendChild(sp);
+}
+
+function simulateWave(ms){
+  // briefly increase heights
+  const spans = barsContainer.querySelectorAll('span');
+  spans.forEach(s=> s.style.transform = 'scaleY(1.2)');
+  setTimeout(()=> spans.forEach(s=> s.style.transform = ''), ms||800);
+}
+
+function enterNightMode(){
+  // camera off visually, show video thumbs for current word
+  cameraBox.querySelector('.camera-view').textContent = 'Camera Off — night mode';
+  document.getElementById('videoContent').innerHTML = createNightThumbnailsHTML(words[currentIndex]);
+}
+
+function enterDayMode(){
+  // camera active, hide thumbnails, show helper text
+  document.getElementById('videoContent').innerHTML = '<div class="video-placeholder">Day mode: camera active — video clips hidden</div>';
+  cameraBox.querySelector('.camera-view').textContent = 'Camera On — assistant ready';
+}
+
+phoneShell.classList.add('day-mode');
+renderWords();
+selectWord();
+
+
+    <div class="left-col">
+      <div class="words-header">Words</div>
+      <ul class="words-list" id="wordsList"></ul>
+      <div style="display:flex;gap:6px;padding-top:8px">
+        <input id="newWord" placeholder="type new word" style="flex:1;padding:6px;border-radius:8px;border:1px solid #ddd" />
+        <button id="addWord" class="small">Add</button>
+      </div>
+      <button id="playAll" class="small">Play till rest of words</button>
+    </div>
+
+    <div class="main-screen" id="mainScreen">
+      <div class="top-bar">
+        <div class="assistant-name">My Assistant</div>
+        <div class="mode-toggle">
+          <button id="toggleDayNight" title="Toggle Day/Night">🌙/☀️</button>
+        </div>
+      </div>
+
+      <div class="content-area">
+        <div class="video-area">
+          <!-- For DAY: camera visible and active, video area minimized -->
+          <div class="ai-video" id="aiVideo">
+            <div class="video-inner">
+              <div class="video-title" id="videoTitle">Short AI video for <span id="currentWord">happy</span></div>
+              <div id="videoContent" class="video-placeholder">(Night mode shows 3 short AI clips)</div>
+            </div>
+          </div>
+          <div class="waveform" aria-hidden="true">
+            <div class="bars" id="waveBars"></div>
+          </div>
+        </div>
+
+        <div class="right-col">
+          <div class="camera-box" id="cameraBox">
+            <div class="live-dot" id="liveDot">● LIVE</div>
+            <div class="camera-view" id="cameraView">Camera On — assistant ready</div>
+          </div>
+          <div class="pick-words" style="opacity:0.9">
+            <div style="font-size:13px;margin-top:6px">Stored words count: <span id="wordsCount">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-bar">
+        <div class="controls">
+          <button id="prevWord" class="small">Prev</button>
+          <button id="nextWord" class="small">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
